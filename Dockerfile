@@ -1,6 +1,6 @@
 ARG POSTGRES_VERSION
 
-FROM postgres:$POSTGRES_VERSION AS builder
+FROM postgres:$POSTGRES_VERSION-alpine AS builder
 
 RUN apk --update add --no-cache wget build-base llvm15 clang15
 
@@ -8,12 +8,12 @@ WORKDIR /src
 
 ARG HLL_VERSION
 RUN wget https://github.com/citusdata/postgresql-hll/archive/refs/tags/v${HLL_VERSION}.tar.gz -O postgresql-hll.tar.gz && \
-    mkdir postgresql-hll && \
-    tar xf ./postgresql-hll.tar.gz -C postgresql-hll --strip-components 1
+  mkdir postgresql-hll && \
+  tar xf ./postgresql-hll.tar.gz -C postgresql-hll --strip-components 1
 WORKDIR /src/postgresql-hll
 RUN make &&  make install
 
-FROM postgres:$POSTGRES_VERSION 
+FROM postgres:$POSTGRES_VERSION-alpine
 
 ENV POSTGRES_PASSWORD postgres
 
